@@ -9,7 +9,7 @@
 #include <sys/wait.h>
 #include "shrink.h"
 
-
+int MAX_SIZE = 0;
 
 /* Seek the zip executable file in every directory in the $PATH, and returns
  * the location of this executable. */
@@ -44,7 +44,6 @@ char *find_zip_executable() {
 
 /* Auxiliary function of find_compressible() to filter the files by size. */
 int filter(const struct dirent * dir) {
-    const int MAX_SIZE = 500 * 1024 * 1024; // 500 MiB
     struct stat st;
     int err = stat(dir->d_name, &st);
     if (err == -1) {
@@ -61,7 +60,6 @@ int filter(const struct dirent * dir) {
  * The function returns the number of element passing the filter `elem'.
  * `relist' is filled by the function. */
 int find_compressible(struct dirent ***retlist) {
-    const int MAX_SIZE = 500 * 1024; // * 1024; // 500 MiB
     struct stat st;
 
     int elem = scandir(".", &(*retlist), filter, alphasort);
@@ -115,7 +113,11 @@ int zip_files(struct dirent ***retlist, int entries , char *zip_executable) {
 }
 
 
-int shrink() {
+int shrink(int max_size) {
+	if (max_size < 1024 * 1024) { // at least 1MiB
+		fprintf(stderr, "Unaccepted minimal shrink size.\n");
+		return 1;
+	}
     char *file;
     file = find_zip_executable();
     if (file == NULL) {
