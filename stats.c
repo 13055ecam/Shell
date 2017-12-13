@@ -13,7 +13,7 @@
 /* Ne compte pas la taille des dossiers mais seulement des fichiers dans les dossiers !*/
 
 
-void stats()
+void stats(const char *directory)
 {
     struct dirent **namelist;
     int n;
@@ -24,12 +24,11 @@ void stats()
     char taille[15] = "taille";
     int nbr = 0; /* nombre de fichier*/
     float  v=0,r,ptr;
-    
     printf ("\n");
     printf (" |%s                     |%s               |%s\n",nom,date,taille);
     printf ("-|------------------------|-------------------|------------------");
     printf ("\n");
-    n = scandir(".", &namelist,NULL,alphasort);
+    n = scandir(directory, &namelist,NULL,alphasort);
     if (n < 0)
     {
         perror("scandir");
