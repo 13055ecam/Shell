@@ -1,7 +1,10 @@
-1) cd du dossier "downloads"
-2) gcc main.c stats.c -o shrink.c clnup.c sortn.c -o test
-3) ./test
-4) Faire les commandes suivantes : 
+1) Télécharger le fichier zip et l'extraire. 
+2) Se rendre à l'emplacemement du fichier via le terminal ("cd...")
+3  Ecrire la commande ./compile.sh pour créer le fichier exécutable "test".
+3) Ecrire la commande ./test pour lancer le programme
+4) Suivre les instructions sur le terminal
+
+Les commandes de notre programme sont les suivantes :
 
 - stats : Affiche les infos (taille, nom, date de la dernière modifification) de chaque fichier d'un dossier 
 - shrink: Compresse les fichiers d'un dossier qui dépassent 500MiB   
