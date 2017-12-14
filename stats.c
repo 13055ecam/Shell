@@ -64,22 +64,24 @@ void stats(const char *directory)
             {
                 if (strlen(namelist[pos]->d_name)>10)
                 {
-                if (size > 1024*1024*1024 && size< 1099511627776)
-                {
-                    printf ("%25s |%10s| %1.2f G\n",strncpy(name,namelist[pos]->d_name,20),date,size/(1024*1024*1024));
-                }
-                if (size > 1024*1024 && size < 1024*1024*1024)
-                {
-                    printf ("%25s |%10s| %1.2f M\n",strncpy(name,namelist[pos]->d_name,20),date,size/(1024*1024));
-                }
-                if (size> 1024 && size< 1024*1024)
-                {
-                    printf ("%25s |%10s| %1.2f K\n",strncpy(name,namelist[pos]->d_name,20),date,size/1024);
-                }
-                if (size < 1024)
-                {
-                    printf ("%25s |%10s| %1.2f B\n",strncpy(name,namelist[pos]->d_name,20),date,size);
-                }
+                    if (size > 1024*1024*1024 && size< 1099511627776)
+                    {
+                        printf ("%25s |%10s| %1.2f G\n",strncpy(name,namelist[pos]->d_name,20),date,size/(1024*1024*1024));
+                    }
+                    else if (size > 1024*1024 && size < 1024*1024*1024)
+                    {
+                        printf ("%25s |%10s| %1.2f M\n",strncpy(name,namelist[pos]->d_name,20),date,size/(1024*1024));
+                    }
+                    else if (size> 1024 && size< 1024*1024)
+                    {
+                        printf ("%25s |%10s| %1.2f K\n",strncpy(name,namelist[pos]->d_name,20),date,size/1024);
+                    }
+                    else if (size < 1024)
+                    {
+                        printf ("%25s |%10s| %1.2f B\n",strncpy(name,namelist[pos]->d_name,20),date,size);
+                    }
+                    else{
+                        printf ("Error. Several files are too big !");
                 }
                 total_files++;
                 total_size+=size;
@@ -100,18 +102,20 @@ void stats(const char *directory)
         {
             printf ("Taille totale du dossier : %1.2f G\n",total_size/(1024*1024*1024));
         }
-        if (total_size > 1024*1024 && total_size < 1024*1024*1024)
+        else if (total_size > 1024*1024 && total_size < 1024*1024*1024)
         {
             printf ("Taille totale du dossier : %1.2f M\n",total_size/(1024*1024));
         }
-        if (total_size > 1024 && total_size < 1024*1024)
+        else if (total_size > 1024 && total_size < 1024*1024)
         {
             printf ("Taille totale du dossier : %1.2f K\n",total_size/1024);
         }
-        if (total_size < 1024)
+        else if (total_size < 1024)
         {
             printf ("Taille totale du dossier : %1.2f B\n",total_size);
         }
+        else{
+            printf ("Error. Several files are too big !");
         printf ("Nombre total de fichiers : %d\n",total_files);
     }
 }
