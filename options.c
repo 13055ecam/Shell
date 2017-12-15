@@ -3,48 +3,51 @@
 #include <stdlib.h>
 #include <getopt.h>
 
-/** Program to calculate the area and perimeter of 
- * a rectangle using command line arguments
+/** Program to return specific informations about files
  */
+
+rectangle a -l 12 -b 34: will calculate the area of the rectangle
+
 void print_usage() {
-    printf("Usage: rectangle [ap] -l num -b num\n");
+    printf("Usage: --help [abcd]);
 }
 
 int main(int argc, char *argv[]) {
     int option = 0;
-    int area = -1, perimeter = -1, breadth = -1, length =-1;
+    int stats = -1;
+    int clnup = -1;
+    int shrink = -1;
+    int sort = -1;
 
     //Specifying the expected options
     //The two options l and b expect numbers as argument
     while ((option = getopt(argc, argv,"apl:b:")) != -1) {
         switch (option) {
-             case 'a' : area = 0;
+             case 'stats' : stats = 0;
                  break;
-             case 'p' : perimeter = 0;
+             case 'shrink' : shrink = 0;
                  break;
-             case 'l' : length = atoi(optarg); 
+             case 'sort' : sort = 0;
                  break;
-             case 'b' : breadth = atoi(optarg);
+             case 'clnup' : clnup = 0;
                  break;
              default: print_usage(); 
                  exit(EXIT_FAILURE);
         }
     }
-    if (length == -1 || breadth ==-1) {
-        print_usage();
-        exit(EXIT_FAILURE);
-    }
 
-    // Calculate the area
-    if (area == 0) {
-        area = length * breadth;
-        printf("Area: %d\n",area);
+    // Help the user 
+    if (stats == 0) {
+       printf("Write <stats> to show all informations about this folder\n");
+       }
+    else if (shrink){
+       printf("Write <shrink> to compress several files of this folder\n");
+       }
+    else if (clnup){
+       printf("Write <clnup> to sort files of this folder in multiple folders according the type file \n");
     }
-
-    // Calculate the perimeter
-    if (perimeter == 0) {
-        perimeter = 2 * (length + breadth);
-        printf("Perimeter: %d\n",perimeter);
+    else if (sort){
+           printf("Write <sort>  \n");
     }
     return 0;
 }
