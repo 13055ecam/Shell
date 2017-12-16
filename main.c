@@ -34,8 +34,8 @@ int main(int argc, char* argv[] )
                 else if (!strcmp("clnup", optarg)){
                         printf("Write <clnup> to sort files of this folder in multiple folders according the type file \n");
                 }
-                else if (!strcmp("sort", optarg)){
-                        printf("Write <sort> \n");
+                else if (!strcmp("sortn", optarg)){
+                        printf("Write <sortn> \n");
                 }
                 exit(EXIT_FAILURE);
                 break;
@@ -55,6 +55,7 @@ int main(int argc, char* argv[] )
         /* Directory exists. */
         DIR* dir = opendir(str);
         if (dir) {
+            printf("Launch a command :");
             scanf("%s", test);
             if (!strcmp("shrink", test)) {
                 char min_size[50];
@@ -70,6 +71,12 @@ int main(int argc, char* argv[] )
             }
             else if(!strcmp("clnup", test)) {
                 clnup(str);
+            }
+            else if(!strcmp("quit", test) ) {
+                exit(0);
+            }
+            else{
+                printf("This command doesn't exist ! Try with stats, shrink, clnup or sortn.More infos in readme.m file!\n");
             }
         } else if (ENOENT == errno) {
             // Directory not exists.
