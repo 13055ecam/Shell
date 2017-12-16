@@ -1,8 +1,14 @@
 1) Télécharger le fichier zip et l'extraire. 
 2) Se rendre à l'emplacemement du fichier via le terminal ("cd...")
-3  Ecrire la commande ./compile.sh pour créer le fichier exécutable "test".
-3) Ecrire la commande ./test pour lancer le programme
-4) Suivre les instructions sur le terminal
+3)  Ecrire la commande ./compile.sh pour créer le fichier exécutable "test".
+
+4) option AIDE des commandes
+ Ecrire la commande ./test -h stats pour lancer lancer l'aide pour stats 
+ Ecrire la commande ./test -h shrink pour lancer lancer l'aide pour shrink 
+ Ecrire la commande ./test -h clnup pour lancer lancer l'aide pour clnup 
+ Ecrire la commande ./test -h sort pour lancer lancer l'aide pour sort
+
+5) Ecrire la commande ./test -r pour lancer le programme 
 
 Les commandes de notre programme sont les suivantes :
 
