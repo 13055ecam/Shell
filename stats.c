@@ -80,8 +80,10 @@ void stats(const char *directory)
                     {
                         printf ("%25s |%10s| %1.2f B\n",strncpy(name,namelist[pos]->d_name,20),date,size);
                     }
-                    else{
+                    else
+                    {
                         printf ("Error. Several files are too big !");
+                    }
                 }
                 total_files++;
                 total_size+=size;
@@ -114,8 +116,10 @@ void stats(const char *directory)
         {
             printf ("Taille totale du dossier : %1.2f B\n",total_size);
         }
-        else{
+        else
+        {
             printf ("Error. Several files are too big !");
+        }
         printf ("Nombre total de fichiers : %d\n",total_files);
     }
 }

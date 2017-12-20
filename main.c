@@ -1,104 +1,141 @@
 #include <stdio.h>
-#include <dirent.h>
-#include <errno.h>
 #include <stdlib.h>
+#include <dirent.h>
 #include <string.h>
+#include <unistd.h>
+#include <errno.h>
+#include "shrink.h"
 #include "stats.h"
 #include "clnup.h"
-#include "shrink.h"
-#include <unistd.h>
-#include <getopt.h>
+
+#define STATS  1
+#define SHRINK 2
+#define CLNUP  4
+#define SORTN  8
 
 
-
-/* terminal*/
-int main(int argc, char* argv[] )
-{
-    char test[15];
-    char str[BUFSIZ];
-    int h = -1;
-    int r = -1;
-   
-    while(1){
-        
-        int option = getopt(argc, argv,"rh:hr:");
-        switch (option)
-        
-        {
-            /* Help commandes */
-            case 'h':
-                if (!strcmp("stats", optarg))
-                {
-                    printf("Write <stats> to show all informations about this folder\n");
-                }
-                else if (!strcmp("shrink", optarg))
-                {
-                    printf("Write <shrink> to compress several files of this folder\n");
-                }
-                else if (!strcmp("clnup", optarg))
-                {
-                    printf("Write <clnup> to sort files of this folder in multiple folders according the type file \n");
-                }
-                else if (!strcmp("sortn", optarg)){
-                        printf("Write <sortn> \n");
-                }
-                exit(EXIT_FAILURE);
-                break;
-                
-            /* run commandes */
-            case 'r' :
-                r =0;
-                break;
-            default:
-            exit(EXIT_FAILURE);
-                break;
-        }
-        
-        if (r==0)
-        {
-            printf("Enter a path :");
-            scanf("%s", str);
-            
-            /* Directory exists. */
-            DIR* dir = opendir(str);
-            
-            if (dir)
-            {
-                printf("Launch a command :");
-                scanf("%s", test);
-                
-                if (!strcmp("shrink", test)) {
-                    char min_size[50];
-                    printf("Enter the minimal compressible size :");
-                    scanf("%s", min_size);
-                    shrink(atoi(min_size));
-                }
-                else if(!strcmp("sortn", test)) {
-                    //sortn();
-                }
-                else if(!strcmp("stats", test)) {
-                    stats(str);
-                }
-                else if(!strcmp("clnup", test)) {
-                    clnup(str);
-                }
-                else if(!strcmp("quit", test) ) {
-                    exit(0);
-                }
-                else{
-                    printf("This command doesn't exist ! Try with stats, shrink, clnup or sortn.More infos in readme.m file!\n");
-                }
-            }
-            
-            // Directory doesn't exist.
-            else if (ENOENT == errno)
-            {
-                printf("Enter a correct path :");
-                DIR* dir = opendir(str);
-                scanf("%s", str);
-            }
-        }
+/**
+ * Split the string input by the space character and store it in the argv array.
+ */
+void splitByArg(char *input, char argv[50][50]) {
+    int i = 0;
+    const char *sep = " ";
+    char *token = strtok(input, sep);
+    while (token != NULL) {
+        strcpy(argv[i], token);
+        token = strtok(NULL, sep);
+        i++;
     }
 }
 
 
+/**
+ * Read the standard input up to CR and return a pointer to the string.
+ */
+char *readSTDIN() {
+#define BUF_SIZE 1024
+    char buffer[BUF_SIZE];
+    char *content = malloc(sizeof(char) * BUF_SIZE);
+    if (content == NULL) {
+        perror("Failed to allocate content");
+        return NULL;
+    }
+    fgets(buffer, BUF_SIZE, stdin);
+    buffer[strlen(buffer)-1] = '\0';
+    strcpy(content, buffer);
+    if (ferror(stdin)) {
+        free(content);
+        perror("Error reading from stdin.");
+        return NULL;
+    }
+    return content;
+#undef BUF_SIZE
+}
+
+
+/**
+ * Execute the selected command by acting as an interpreter and reading the its
+ * input from the stdin.
+ */
+int main(void) {
+    char *input;
+    int operation = 0;
+    char argv[25][50];
+
+    printf("This is the launch terminal of our projet.                     \n" \
+           "The commands are stats, shrink, clnup, sortn and exit.         \n" \
+           "Type `<command> --help' to get more information on the command.\n");
+
+    for (;;) {
+        printf(">>> ");
+        input = readSTDIN();
+        if (input == NULL) {
+            // error reading from stdin
+            return 1;
+        }
+        bzero(argv, sizeof argv);
+        splitByArg(input, argv);
+        free(input);
+
+        // simple and naive comparaison to determine the selected operation
+        if (!strcmp(argv[0], "stats")) {
+            operation = STATS;
+        } else if (!strcmp(argv[0], "shrink")) {
+            operation = SHRINK;
+        } else if (!strcmp(argv[0], "clnup")) {
+            operation = CLNUP;
+        } else if (!strcmp(argv[0], "sortn")) {
+            operation = SORTN;
+        } else if (!strcmp(argv[0], "exit")) {
+            // end of program
+            return 0;
+        } else {
+            fprintf(stderr, "The command %s is unknow\n", argv[0]);
+            continue;
+        }
+
+        // redirect the program to the selected operation
+        switch (operation) {
+            case STATS:
+                if (!strcmp(argv[1], "--help")) {
+                    printf("Write <stats> to show all informations about "     \
+                           "this folder \n");
+                    continue;
+                }
+                //stats(NULL);
+                break;
+
+            case SHRINK:
+                if (!strcmp(argv[1], "--help")) {
+                    printf("Write <shrink> to compress several files of this " \
+                           "folder \n");
+                    continue;
+                }
+                int min_size = atoi(argv[1]);
+                if (min_size == 0) {
+                    fprintf(stderr, "Missing or invalide minimal compressing " \
+                                    "size, assigning 1MiB by default.");
+                    min_size = 1024 * 1024;
+                }
+                shrink(min_size);
+                break;
+
+            case CLNUP:
+                if (!strcmp(argv[1], "--help")) {
+                    printf("Write <clnup> to sort files of this folder in "    \
+                           "multiple folders according the type file \n");
+                    continue;
+                }
+                //clnup(NULL);
+                break;
+                
+            case SORTN:
+                if (!strcmp(argv[1], "--help")) {
+                    printf("Write <sortn> \n");
+                    continue;
+                }
+                //sortn(NULL);
+                break;
+        }
+    }
+}
