@@ -10,11 +10,6 @@
 #include "clnup.h"
 
 
-char *directory = "/Users/gaetanguru/Downloads";
-/*
-int main(){
-  clnup("/Users/gaetanguru/Downloads");
-}*/
 
 void clnup(char *directory)
 {
