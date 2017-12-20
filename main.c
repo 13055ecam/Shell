@@ -7,25 +7,75 @@
 #include "clnup.h"
 #include "shrink.h"
 #include <unistd.h>
-#include <getopt.h>
 
+/**
+ *
+ */
+void splitByArg(char *input, char argv[50][50]) {
+    int i = 0;
+    const char *sep = " ";
+    char *token = strtok(input, sep);
+    while (token != NULL) {
+        strcpy(argv[i], token);
+        token = strtok(NULL, sep);
+        i++;
+    }
+}
 
+/**
+ * 
+ */
+char *readSTDIN() {
+#define BUF_SIZE 1024
+    char buffer[BUF_SIZE];
+    char *content = malloc(sizeof(char) * BUF_SIZE);
+    if (content == NULL) {
+        perror("Failed to allocate content");
+        return NULL;
+    }
+    fgets(buffer, BUF_SIZE, stdin);
+    buffer[strlen(buffer)-1] = '\0';
+    strcpy(content, buffer);
+    if (ferror(stdin)) {
+        free(content);
+        perror("Error reading from stdin.");
+        return NULL;
+    }
+    return content;
+#undef BUF_SIZE
+}
 
-/* terminal*/
-int main(int argc, char* argv[] )
-{
-    char test[15];
-    char str[BUFSIZ];
-    int h = -1;
-    int r = -1;
-   
-    while(1){
-        
-        int option = getopt(argc, argv,"rh:hr:");
-        switch (option)
-        
-        {
-            /* Help commandes */
+/**
+ * 
+ */
+int main(void) {
+    char *input;
+    char argv[25][50];
+    bzero(argv, sizeof argv);
+
+    printf("This is the launch terminal of our projet.                     \n" \
+           "The commands are stats, shrink, clnup and sortn.               \n" \
+           "Type `<command> --help' to get more information on the command.\n" \
+           ">>> ");
+
+    for (;;) {
+        input = readSTDIN();
+        if (input == NULL) {
+            // error reading from stdin
+            return 1;
+        }
+        splitByArg(input, argv);
+
+        for (int i = 0; i < 25; i++) {
+            printf("[%s]", argv[i]);
+        }
+
+        break;
+    }
+}
+
+/*
+
             case 'h':
                 if (!strcmp("stats", optarg))
                 {
@@ -45,7 +95,7 @@ int main(int argc, char* argv[] )
                 exit(EXIT_FAILURE);
                 break;
                 
-            /* run commandes */
+            run commandes
             case 'r' :
                 r =0;
                 break;
@@ -59,7 +109,7 @@ int main(int argc, char* argv[] )
             printf("Enter a path :");
             scanf("%s", str);
             
-            /* Directory exists. */
+            Directory exists.
             DIR* dir = opendir(str);
             
             if (dir)
@@ -100,5 +150,7 @@ int main(int argc, char* argv[] )
         }
     }
 }
+
+*/
 
 
