@@ -6,16 +6,10 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <errno.h>
-// #include "sort.c"
-#include "extensions.h"
+#include "extensions.c"
 #include "clnup.h"
 
 
-char *directory = "/Users/gaetanguru/Downloads";
-/*
-int main(){
-  clnup("/Users/gaetanguru/Downloads");
-}*/
 
 void clnup(char *directory)
 {
@@ -23,8 +17,6 @@ void clnup(char *directory)
   struct dirent *dp;
   char filename[255];
   char entireFilename[255];
-  // char entireFilename[255];
-  // char str[] = "This is - www.tutorialspoint.com - website";
   char s[1] = ".";
   char *token;
   char *type;
@@ -44,7 +36,6 @@ void clnup(char *directory)
     token = strtok(filename, s);
     while(token!=NULL){
       token=strtok(NULL,s);
-      // printf("token :%c\n",*s);
       if(token!=NULL){type=token;}
     }
     if(type!=NULL){
