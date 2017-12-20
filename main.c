@@ -102,7 +102,11 @@ int main(void) {
                            "this folder \n");
                     continue;
                 }
-                //stats(NULL);
+                if (argv[1] == NULL) {
+                    printf("Not directory\n");
+                    continue;
+                }
+                stats(argv[1]);
                 break;
 
             case SHRINK:
@@ -126,7 +130,11 @@ int main(void) {
                            "multiple folders according the type file \n");
                     continue;
                 }
-                //clnup(NULL);
+                if (argv[1] == NULL) {
+                    printf("Not directory\n");
+                    continue;
+                }
+                clnup(argv[1]);
                 break;
                 
             case SORTN:
