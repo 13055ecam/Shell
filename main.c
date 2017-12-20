@@ -1,17 +1,18 @@
 #include <stdio.h>
-#include <dirent.h>
-#include <errno.h>
 #include <stdlib.h>
+#include <dirent.h>
 #include <string.h>
+#include <unistd.h>
+#include <errno.h>
+#include "shrink.h"
 #include "stats.h"
 #include "clnup.h"
-#include "shrink.h"
-#include <unistd.h>
 
 #define STATS  1
 #define SHRINK 2
 #define CLNUP  4
 #define SORTN  8
+
 
 /**
  * Split the string input by the space character and store it in the argv array.
@@ -26,6 +27,7 @@ void splitByArg(char *input, char argv[50][50]) {
         i++;
     }
 }
+
 
 /**
  * Read the standard input up to CR and return a pointer to the string.
@@ -50,6 +52,7 @@ char *readSTDIN() {
 #undef BUF_SIZE
 }
 
+
 /**
  * Execute the selected command by acting as an interpreter and reading the its
  * input from the stdin.
@@ -72,6 +75,7 @@ int main(void) {
         }
         bzero(argv, sizeof argv);
         splitByArg(input, argv);
+        free(input);
 
         // simple and naive comparaison to determine the selected operation
         if (!strcmp(argv[0], "stats")) {
@@ -87,6 +91,7 @@ int main(void) {
             return 0;
         } else {
             fprintf(stderr, "The command %s is unknow\n", argv[0]);
+            continue;
         }
 
         // redirect the program to the selected operation
@@ -95,19 +100,22 @@ int main(void) {
                 if (!strcmp(argv[1], "--help")) {
                     printf("Write <stats> to show all informations about "     \
                            "this folder \n");
+                    continue;
                 }
-                stats(NULL);
+                //stats(NULL);
                 break;
 
             case SHRINK:
                 if (!strcmp(argv[1], "--help")) {
                     printf("Write <shrink> to compress several files of this " \
                            "folder \n");
+                    continue;
                 }
-                int min_size = atoi(argv[2]);
+                int min_size = atoi(argv[1]);
                 if (min_size == 0) {
-                    fprintf(stderr, "Missing or invalide minimal compressing"  \
+                    fprintf(stderr, "Missing or invalide minimal compressing " \
                                     "size, assigning 1MiB by default.");
+                    min_size = 1024 * 1024;
                 }
                 shrink(min_size);
                 break;
@@ -116,15 +124,17 @@ int main(void) {
                 if (!strcmp(argv[1], "--help")) {
                     printf("Write <clnup> to sort files of this folder in "    \
                            "multiple folders according the type file \n");
+                    continue;
                 }
-                clnup(NULL);
+                //clnup(NULL);
                 break;
                 
             case SORTN:
                 if (!strcmp(argv[1], "--help")) {
                     printf("Write <sortn> \n");
+                    continue;
                 }
-                clnup(NULL);
+                //sortn(NULL);
                 break;
         }
     }

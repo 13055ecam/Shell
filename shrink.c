@@ -114,10 +114,10 @@ int zip_files(struct dirent ***retlist, int entries , char *zip_executable) {
 
 
 int shrink(int min_size) {
-	if (min_size < 1024 * 1024) { // at least 1MiB
-		fprintf(stderr, "Unaccepted minimal shrink size.\n");
-		return 1;
-	}
+    if (min_size < 1024 * 1024) { // at least 1MiB
+        fprintf(stderr, "Unaccepted minimal shrink size.\n");
+        return 1;
+    }
     char *file;
     file = find_zip_executable();
     if (file == NULL) {
