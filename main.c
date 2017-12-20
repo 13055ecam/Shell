@@ -90,7 +90,7 @@ int main(void) {
             // end of program
             return 0;
         } else {
-            fprintf(stderr, "The command %s is unknow\n", argv[0]);
+            fprintf(stderr, "The command %s is unknown.\n", argv[0]);
             continue;
         }
 
