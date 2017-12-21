@@ -12,8 +12,9 @@
 #include <unistd.h>
 
 
-void stats(const char *directory)
+int stats(char argv[25][50])
 {
+    const char *directory = argv[1];
     struct dirent **namelist;
     
     /* set the position of file in a list */  
@@ -122,6 +123,7 @@ void stats(const char *directory)
         }
         printf ("Nombre total de fichiers : %d\n",total_files);
     }
+    return 0;
 }
 
  

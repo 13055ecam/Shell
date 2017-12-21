@@ -1,7 +1,7 @@
 #ifndef CLNUP_H
 #define CLNUP_H
 
-void clnup(char *);
+int clnup(char [25][50]);
 char *newDirectoryFile(char *, char *, char *);
 int fileOrFolder(char *, char *);
 char *typeVariable(char *, char *);

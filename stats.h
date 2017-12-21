@@ -1,6 +1,6 @@
 #ifndef STATS_H
 #define STATS_H
 
-void stats(const char *);
+int stats(char [25][50]);
 
 #endif /* STATS_H */

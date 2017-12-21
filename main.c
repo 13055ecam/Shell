@@ -4,18 +4,24 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <stdbool.h>
 #include "shrink.h"
 #include "stats.h"
 #include "clnup.h"
 
-#define STATS  1
-#define SHRINK 2
-#define CLNUP  4
-#define SORTN  8
+/**
+ * Structure that represent a command.
+ */
+struct command {
+    char name[32];                  // name of the command
+    char help[512];                 // --help message
+    int (*execute)(char [25][50]);  // pointer to function
+};
 
 
 /**
- * Split the string input by the space character and store it in the argv array.
+ * Split the string input by the space character
+ * and store it in the argv array.
  */
 void splitByArg(char *input, char argv[50][50]) {
     int i = 0;
@@ -30,7 +36,8 @@ void splitByArg(char *input, char argv[50][50]) {
 
 
 /**
- * Read the standard input up to CR and return a pointer to the string.
+ * Read the standard input up to CR and
+ * return a pointer to the string.
  */
 char *readSTDIN() {
 #define BUF_SIZE 1024
@@ -54,13 +61,35 @@ char *readSTDIN() {
 
 
 /**
- * Execute the selected command by acting as an interpreter and reading the its
- * input from the stdin.
+ * Execute the selected command by acting as an interpreter
+ * and reading the its input from the stdin.
  */
 int main(void) {
     char *input;
-    int operation = 0;
+    int operation;
     char argv[25][50];
+
+    const struct command commands[] = {
+        {
+            .name    = "stats",
+            .help    = "Write 'stats` to show all informations about this "    \
+                       "folder\n",
+            .execute = stats,
+        },
+        {
+            .name    = "shrink",
+            .help    = "Write 'shrink` to compress several files of this "     \
+                       "folder\n",
+            .execute = shrink,
+        },
+        {
+            .name    = "clnup",
+            .help    = "Write 'clnup` to sort files of this folder in "        \
+                       "multiple folders according the type file \n",
+            .execute = clnup,
+        },
+        {0}
+    };
 
     printf("This is the launch terminal of our projet.                     \n" \
            "The commands are stats, shrink, clnup, sortn and exit.         \n" \
@@ -77,65 +106,26 @@ int main(void) {
         splitByArg(input, argv);
         free(input);
 
-        // simple and naive comparaison to determine the selected operation
-        if (!strcmp(argv[0], "stats")) {
-            operation = STATS;
-        } else if (!strcmp(argv[0], "shrink")) {
-            operation = SHRINK;
-        } else if (!strcmp(argv[0], "clnup")) {
-            operation = CLNUP;
-        } else if (!strcmp(argv[0], "sortn")) {
-            operation = SORTN;
-        } else if (!strcmp(argv[0], "exit")) {
-            // end of program
-            return 0;
-        } else {
+        operation = -1;
+        for (int i = 0; *(commands[i].name) && operation == -1; i++) {
+            if (strcmp(argv[0], commands[i].name) == 0) {
+                operation = i;
+            }
+        }
+        if (operation == -1) {
+            // unknown command parsed
+            if (strcmp(argv[0], "exit") == 0 ||
+                strcmp(argv[0], "quit") == 0) {
+                fprintf(stdout, "Bye\n");
+                return 0;
+            }
             fprintf(stderr, "The command %s is unknown.\n", argv[0]);
             continue;
         }
-
-        // redirect the program to the selected operation
-        switch (operation) {
-            case STATS:
-                if (!strcmp(argv[1], "--help")) {
-                    printf("Write <stats> to show all informations about "     \
-                           "this folder \n");
-                    continue;
-                }
-                //stats(NULL);
-                break;
-
-            case SHRINK:
-                if (!strcmp(argv[1], "--help")) {
-                    printf("Write <shrink> to compress several files of this " \
-                           "folder \n");
-                    continue;
-                }
-                int min_size = atoi(argv[1]);
-                if (min_size == 0) {
-                    fprintf(stderr, "Missing or invalide minimal compressing " \
-                                    "size, assigning 1MiB by default.");
-                    min_size = 1024 * 1024;
-                }
-                shrink(min_size);
-                break;
-
-            case CLNUP:
-                if (!strcmp(argv[1], "--help")) {
-                    printf("Write <clnup> to sort files of this folder in "    \
-                           "multiple folders according the type file \n");
-                    continue;
-                }
-                //clnup(NULL);
-                break;
-                
-            case SORTN:
-                if (!strcmp(argv[1], "--help")) {
-                    printf("Write <sortn> \n");
-                    continue;
-                }
-                //sortn(NULL);
-                break;
+        if (strcmp(argv[1], "--help") == 0) {
+            fprintf(stdout, "%s", commands[operation].help);
+            continue;
         }
+        (*commands[operation].execute)(argv);
     }
 }

@@ -8,8 +8,9 @@
 #include <errno.h>
 #include "clnup.h"
 
-void clnup(char *directory)
+int clnup(char argv[25][50])
 {
+  char *directory = argv[1];
   DIR *dir;
   struct dirent *dp;
   char filename[255];
@@ -20,7 +21,7 @@ void clnup(char *directory)
 
   if((dir=opendir(directory))==NULL){
     perror ("Can't open directory");
-    exit(1);
+    return 1;
   }
   while((dp=readdir(dir))){
     strcpy(filename,dp->d_name);
@@ -39,6 +40,7 @@ void clnup(char *directory)
       newDirectoryFile(type, directory, entireFilename);
     }
   }
+  return 0;
 }
 char *newDirectoryFile(char *type, char *directory, char *filename){
   char *oldFilename;
