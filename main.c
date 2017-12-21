@@ -1,10 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <dirent.h>
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
-#include <stdbool.h>
 #include "shrink.h"
 #include "stats.h"
 #include "clnup.h"
@@ -69,24 +67,20 @@ int main(void) {
     int operation;
     char argv[25][50];
 
-    const struct command commands[] = {
-        {
+    const struct command commands[] = {{
             .name    = "stats",
             .execute = stats,
             .help    = "Write `stats` to show all informations about this folder\n",
-        },
-        {
+        },{
             .name    = "shrink",
             .execute = shrink,
             .help    = "Write `shrink` to compress several files of this folder\n",
-        },
-        {
+        },{
             .name    = "clnup",
             .execute = clnup,
             .help    = "Write `clnup` to sort files of this folder in multiple folders according " \
                        "the type file \n",
-        },
-        {0}
+        },{0}
     };
 
     printf("This is the launch terminal of our projet.                     \n" \
