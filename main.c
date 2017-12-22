@@ -1,20 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <dirent.h>
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
-#include <stdbool.h>
 #include "shrink.h"
 #include "stats.h"
 #include "clnup.h"
 
 /**
  * Structure that represent a command.
+ * The name of the command will be its called name.
+ * The `execute` pointer redirects to the function that will be called by the command.
  */
 struct command {
-    char name[32];                  // name of the command
-    char help[512];                 // --help message
+    const char name[32];            // name of the command
+    const char help[512];           // --help message
     int (*execute)(char [25][50]);  // pointer to function
 };
 
@@ -23,7 +23,7 @@ struct command {
  * Split the string input by the space character
  * and store it in the argv array.
  */
-void splitByArg(char *input, char argv[50][50]) {
+void split_by_arg(char *input, char argv[50][50]) {
     int i = 0;
     const char *sep = " ";
     char *token = strtok(input, sep);
@@ -39,7 +39,7 @@ void splitByArg(char *input, char argv[50][50]) {
  * Read the standard input up to CR and
  * return a pointer to the string.
  */
-char *readSTDIN() {
+char *read_stdin() {
 #define BUF_SIZE 1024
     char buffer[BUF_SIZE];
     char *content = malloc(sizeof(char) * BUF_SIZE);
@@ -62,48 +62,42 @@ char *readSTDIN() {
 
 /**
  * Execute the selected command by acting as an interpreter
- * and reading the its input from the stdin.
+ * and reading the input from the stdin.
  */
 int main(void) {
     char *input;
     int operation;
     char argv[25][50];
 
-    const struct command commands[] = {
-        {
+    const struct command commands[] = {{
             .name    = "stats",
-            .help    = "Write 'stats` to show all informations about this "    \
-                       "folder\n",
             .execute = stats,
-        },
-        {
+            .help    = "Write `stats` to show all informations about this folder\n",
+        },{
             .name    = "shrink",
-            .help    = "Write 'shrink` to compress several files of this "     \
-                       "folder\n",
             .execute = shrink,
-        },
-        {
+            .help    = "Write `shrink` to compress several files of this folder\n",
+        },{
             .name    = "clnup",
-            .help    = "Write 'clnup` to sort files of this folder in "        \
-                       "multiple folders according the type file \n",
             .execute = clnup,
-        },
-        {0}
+            .help    = "Write `clnup` to sort files of this folder in multiple folders according " \
+                       "the type file\n",
+        },{0}
     };
 
     printf("This is the launch terminal of our projet.                     \n" \
-           "The commands are stats, shrink, clnup, sortn and exit.         \n" \
-           "Type `<command> --help' to get more information on the command.\n");
+           "The commands are stats, shrink, clnup and exit.                \n" \
+           "Type `<command> --help` to get more information on the command.\n");
 
     for (;;) {
         printf(">>> ");
-        input = readSTDIN();
+        input = read_stdin();
         if (input == NULL) {
             // error reading from stdin
             return 1;
         }
         bzero(argv, sizeof argv);
-        splitByArg(input, argv);
+        split_by_arg(input, argv);
         free(input);
 
         operation = -1;
@@ -122,7 +116,7 @@ int main(void) {
             fprintf(stderr, "The command %s is unknown.\n", argv[0]);
             continue;
         }
-        if (strcmp(argv[1], "--help") == 0) {
+        if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
             fprintf(stdout, "%s", commands[operation].help);
             continue;
         }
