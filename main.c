@@ -9,6 +9,8 @@
 
 /**
  * Structure that represent a command.
+ * The name of the command will be its called name.
+ * The `execute` pointer redirects to the function that will be called by the command.
  */
 struct command {
     const char name[32];            // name of the command
@@ -60,7 +62,7 @@ char *read_stdin() {
 
 /**
  * Execute the selected command by acting as an interpreter
- * and reading the its input from the stdin.
+ * and reading the input from the stdin.
  */
 int main(void) {
     char *input;
@@ -79,12 +81,12 @@ int main(void) {
             .name    = "clnup",
             .execute = clnup,
             .help    = "Write `clnup` to sort files of this folder in multiple folders according " \
-                       "the type file \n",
+                       "the type file\n",
         },{0}
     };
 
     printf("This is the launch terminal of our projet.                     \n" \
-           "The commands are stats, shrink, clnup, sortn and exit.         \n" \
+           "The commands are stats, shrink, clnup and exit.                \n" \
            "Type `<command> --help` to get more information on the command.\n");
 
     for (;;) {
@@ -114,7 +116,7 @@ int main(void) {
             fprintf(stderr, "The command %s is unknown.\n", argv[0]);
             continue;
         }
-        if (strcmp(argv[1], "--help") == 0) {
+        if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
             fprintf(stdout, "%s", commands[operation].help);
             continue;
         }
